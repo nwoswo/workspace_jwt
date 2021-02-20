@@ -1,0 +1,111 @@
+jwt 16
+------------------- Antes del handler
+-------------------------------------------------2
+
+CASO 2
+
+
+
+	@GetMapping(value = "/healthcheck", produces = "application/json; charset=utf-8")
+	  
+	public String getHealthCheck() 
+	{
+		return "{ \"todoOk\" : true }";
+	}
+	
+	
+{
+    "todoOk": true
+}
+	
+CASO 3
+
+http://localhost:8080/jwt16/auth/generate-token
+
+{ 
+  "username" : "lynas",
+  "password" : "123456"
+}
+
+CASO 4 PROBANDO EL CONTEXT ()
+
+	localhost:8080/jwt16/test/healthcheck
+	@GetMapping(value = "/healthcheck", produces = "application/json; charset=utf-8")
+	  
+	public String getHealthCheck() 
+	username=null
+	header=null
+	SecurityContextHolder.getContext().getAuthentication()=null
+
+
+
+CASO 5 PROBANDO EL CONTEXT
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')") 
+	@GetMapping(value = "/healthcheck", produces = "application/json; charset=utf-8")
+revienta 500
+org.springframework.web.util.NestedServletException: Request processing failed; nested exception is org.springframework.security.authentication.AuthenticationCredentialsNotFoundException: An Authentication	
+	//No guarda en el context como en el lynas original ! 
+		//Haberiguar por que
+		
+		
+CASO 6 PROBANDO CUANDO CON PASSWORD EQUIVOCADO
+
+http://localhost:8080/jwt16/auth/generate-token
+{ 
+  "username" : "lynas",
+  "password" : "1234567"
+}
+revienta 
+500
+.NestedServletException: Request processing failed; nested exception is org.springframework.security.authentication.BadCredentialsException: Bad credentials
+
+
+
+CASO 7 CON EL URL MALO 
+http://localhost:8080/jwt16/auth/generate-token222222222222
+
+404 NOT FOUND , NO REVIENTA
+
+	
+	
+----------------->>>Revienta
+
+----------------------------------------------------------------------------------------------------  DESPUES DEL HANDLER
+
+CASO 5
+
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')") 
+	@GetMapping(value = "/healthcheck", produces = "application/json; charset=utf-8")
+	
+	NO REVIENTA   HANDLER 404 
+	
+{
+    "message": "Forbidden",
+    "status": 403
+}
+
+
+
+CASO 6  ->mejorar la respuesta 
+
+http://localhost:8080/jwt16/auth/generate-token
+{ 
+  "username" : "lynas",
+  "password" : "1234567"
+}
+
+NO REVIENTA HEADER 500
+{
+    "message": "Internal Server Error",
+    "status": 500
+}
+
+
+CASO 4 Y 5 // NO GUARDA EN EL CONTEXT   TODO OK 
+
+
+-------------------------------------------------------------------------- MEJORAR CASO 6
+	
+
+
+ 
