@@ -12,26 +12,27 @@
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
 			<param-value>
-			
+
 				pe.gob.mef.config.WebConfig
 				pe.gob.mef.config.RootConfig
-				
+
 			</param-value>
 		</init-param>
 	</servlet>
-	
+
 	<filter>
-	<filter-name>springSecurityFilterChain</filter-name>
-	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-</filter>
-<filter-mapping>
-	<filter-name>springSecurityFilterChain</filter-name>
-	<url-pattern>/*</url-pattern>
-</filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
- 
 
-	
+
+
 	<servlet-mapping>
 		<servlet-name>
 			SpringController
