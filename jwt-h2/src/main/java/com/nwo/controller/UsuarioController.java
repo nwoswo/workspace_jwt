@@ -42,10 +42,9 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioService usuarioService;
 
-	 @Secured("ROLE_USER")
+	 @PreAuthorize("hasRole('ROLE_USER')")
+	 //@PreAuthorize("hasAuthority('[{authority=ROLE_USER}]')")
 	 @GetMapping("/listar0")
-
-
 	 public List<Usuario> getList( HttpServletRequest request) {
 		 System.out.println("request.isUserInRole(\"ROLE_ADMIN\")"+request.isUserInRole("_ADMIN"));
 		 System.out.println("request.isUserInRole(\"ROLE_USER\")"+request.isUserInRole("USER"));
@@ -54,10 +53,9 @@ public class UsuarioController {
 	  
 	 }
 	 
-	 @PreAuthorize("hasAuthority('[{authority=ROLE_ADMIN}]')")
+	 @PreAuthorize("hasRole('ROLE_ADMIN')")
+	 //@PreAuthorize("hasAuthority('[{authority=ROLE_ADMIN}]')")
 	 @GetMapping("/listar")
-
-
 	 public List<Usuario> getLista() {
 	  List<Usuario> usuariosList = usuarioService.getList();
 	  return usuariosList;	
@@ -65,7 +63,8 @@ public class UsuarioController {
 	 }
 	 
 	 
-	 @PreAuthorize("hasAuthority('ADMIN')")
+	 //@PreAuthorize("hasAuthority('ADMIN')")
+	 @PreAuthorize("hasRole('ROLE_ADMIN')")
 	 @PutMapping("/usuario/{id}")
 	 
 	 public List<Usuario> updateUser(@PathVariable("id") long id, @RequestBody Usuario usuario) {

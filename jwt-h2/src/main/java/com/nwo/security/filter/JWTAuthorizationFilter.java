@@ -41,7 +41,7 @@ public class JWTAuthorizationFilter  extends OncePerRequestFilter {
 
 	protected boolean requiresAuthentication(String header) {
 		
-		System.out.println("header: "+header);
+		
 		if(header == null || !header.startsWith(jwtConfig.getTokenPrefix()) ) {
 			return true;
 			
@@ -59,7 +59,7 @@ public class JWTAuthorizationFilter  extends OncePerRequestFilter {
         try {
 	        	String header = req.getHeader("Authorization");
 	        	
-	        	System.out.println("------header--------"+header);
+	        
 	        	
 	        	if(requiresAuthentication(header)) {
 	        		filterChain.doFilter(req, res);
@@ -70,22 +70,25 @@ public class JWTAuthorizationFilter  extends OncePerRequestFilter {
 	        	String token = header.replace(jwtConfig.getTokenPrefix(), "");
 	        	
 	        	SecretKey secretKey = new SecretKeySpec(jwtConfig.getSecretKey().getBytes(), SignatureAlgorithm.HS256.getJcaName());
+	        	
 	        	Claims body = Jwts.parserBuilder()
 	                    .setSigningKey(secretKey).build()
 	                    .parseClaimsJws( token )
 	                    .getBody();
 	
+	        	System.out.println("body :"+body);
+	        	
 	            String username  = body.getSubject(); 
-	            Object roles = body.get("authorities");
+	            Object roles = body.get("ROLES");
 
-	            System.out.println("roles :"+roles);
+	            System.out.println("roles :"+AuthorityUtils.commaSeparatedStringToAuthorityList(roles.toString()));
 	            
 	            Collection<? extends GrantedAuthority> authorities  = AuthorityUtils.commaSeparatedStringToAuthorityList(roles.toString());
 	            authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
 	            
 	            System.out.println("authorities :"+authorities);
 	            
-	            System.out.println("authentication :"+authentication);
+	            
 	            SecurityContextHolder.getContext().setAuthentication(authentication);
 	            
 	            

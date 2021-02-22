@@ -2,9 +2,13 @@ package com.nwo.security.filter;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,6 +27,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
+import com.google.common.primitives.Chars;
 import com.google.gson.Gson;
 import com.nwo.domain.Usuario;
 import com.nwo.security.config.JwtConfig;
@@ -31,6 +37,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 
 public class JwtUserAndPasswodAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -57,7 +65,7 @@ public class JwtUserAndPasswodAuthenticationFilter extends UsernamePasswordAuthe
     	 username = usuario.getUsername();
 		 password = usuario.getPassword();
 		 
-         System.out.println("usuario username: "+usuario.getUsername());
+     
          
     	 
 		}  catch (IOException e) {
@@ -95,18 +103,27 @@ public class JwtUserAndPasswodAuthenticationFilter extends UsernamePasswordAuthe
             throws IOException, ServletException {
     	SecretKey secretKey = new SecretKeySpec(jwtConfig.getSecretKey().getBytes(), SignatureAlgorithm.HS256.getJcaName());
     	
-    	System.out.println("authResult.getAuthorities() : "+authResult.getAuthorities());
     	
-        String token = Jwts.builder()
-                .setSubject(authResult.getName())
-                .claim("authorities", authResult.getAuthorities())
-                .setIssuedAt(new Date())
-                .setExpiration( java.sql.Date.valueOf(LocalDate.now().plusDays(Long.valueOf(jwtConfig.getTokenExpirationAfterDays()))) )
-                .signWith(secretKey)
-                .compact();
+    	
+
+
+
+    	String ROLES = Joiner.on(",").join(authResult.getAuthorities().toArray());
+    	
+    	 
+    	String token  = Jwts.builder()
+		.setSubject(authResult.getName())
+		.claim("ROLES", ROLES)
+		.signWith(secretKey)
+		.setIssuedAt(new Date(System.currentTimeMillis()))
+		//.setIssuer("ISSUER")
+		.setExpiration(new Date(System.currentTimeMillis() + 28800*1000))
+		.compact();
+    	
+
 
         response.addHeader(HttpHeaders.AUTHORIZATION,jwtConfig.getTokenPrefix() + token);
-        System.out.println("TOKEN:"+token);
+        
         String json = new Gson().toJson(authResult);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

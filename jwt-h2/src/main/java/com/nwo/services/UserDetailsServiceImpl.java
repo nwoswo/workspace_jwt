@@ -1,7 +1,11 @@
 package com.nwo.services;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,13 +30,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(String.format("No appUser found with username '%s'.", username));
         } else {
         	System.out.println("usuario.getRoles() "+usuario.getRoles());
+        	
+        	Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+
+    		 authorities.add(new SimpleGrantedAuthority(usuario.getRoles()));
+
+    		
+    		
+    		
         	return new User(
         			usuario.getUsername(), 
         			usuario.getPassword(), 
-        			true, 
-        			true, 
-        			true, 
-        			true, 
         			AuthorityUtils.commaSeparatedStringToAuthorityList(usuario.getRoles())
         		);
         	
