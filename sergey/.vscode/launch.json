@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-KeyResourceApplication<key-resource>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.nwo.api.keyresource.KeyResourceApplication",
+      "projectName": "key-resource",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
